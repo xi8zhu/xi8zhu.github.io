@@ -12,7 +12,7 @@ nav a { color:#555; }
 nav .active { color:var(--foreground); font-weight:600; }
 .content-grid { display:grid; grid-template-columns:225px minmax(0,1fr); gap:58px; padding:48px 0 70px; }
 .profile { align-self:start; }
-.avatar { width:152px; aspect-ratio:1; display:grid; place-items:center; background:#eceff1; border:1px solid #dfe3e6; color:#8a9196; font-size:13px; }
+.avatar { width:152px; aspect-ratio:1; display:block; object-fit:cover; background:#eceff1; border:1px solid #dfe3e6; }
 .profile h1 { margin:20px 0 1px; font:700 24px/1.35 Georgia,"Songti SC",serif; }
 .role,.location { margin:0; color:#555; font-size:13px; }
 .location { color:var(--muted); }
@@ -32,7 +32,7 @@ nav .active { color:var(--foreground); font-weight:600; }
 .news-section time,.post>time { color:var(--muted); font:12px ui-monospace,SFMono-Regular,Consolas,monospace; }
 .posts-section { padding-top:28px; }
 .post-list { border-top:1px solid var(--line); }
-.post { display:grid; grid-template-columns:100px 1fr; gap:18px; padding:22px 0 21px; border-bottom:1px solid var(--line); }
+.post { display:grid; grid-template-columns:1fr; gap:18px; padding:22px 0 21px; border-bottom:1px solid var(--line); }
 .post h3 { margin:0 0 4px; font:600 18px/1.45 Georgia,"Songti SC",serif; }
 .post p { margin:0; color:var(--muted); font-size:13px; }
 .tags { display:flex; gap:10px; margin-top:7px; color:var(--link); font-size:11px; }
