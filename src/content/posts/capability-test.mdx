@@ -1,0 +1,86 @@
+---
+title: 一篇文章能做到什么：博客能力测试
+description: 用一篇示例文章验证图片、表格、数学公式、代码与富文本强调。
+date: 2026-09-04
+tags:
+  - 博客建设
+  - MDX
+  - 数学
+---
+
+这是一篇专门用于验证博客排版能力的文章。它不是占位页面，而是一份以后写技术文章时可以直接参考的格式样板。
+
+## 1. 基础文字与富文本
+
+普通 Markdown 可以直接写出 **加粗文字**、*斜体文字*、`行内代码` 和 [外部链接](https://astro.build/)。
+
+MDX 还允许我们使用预先设计好的强调样式：
+
+- <span class="text-blue">蓝色文字适合标记概念或结论。</span>
+- <span class="text-red">红色文字只用于风险、限制或需要格外注意的地方。</span>
+- <mark class="mark-yellow">黄色底色适合标记需要回看的重点。</mark>
+- <mark class="mark-blue">蓝色底色适合标记定义或补充说明。</mark>
+
+> 写作建议：颜色是信息层级，不是装饰。每篇文章只使用少量强调，页面会更耐读。
+
+## 2. 图片与图注
+
+下面是一张使用 SVG 绘制的研究流程示意图。SVG 在高清屏上不会模糊，也能与页面风格保持一致。
+
+<figure>
+  <img src="/images/modeling-loop.svg" alt="从问题定义到长期价值评估的建模流程" />
+  <figcaption>图 1：从问题定义、数据与表征、模型训练到长期价值评估的闭环。</figcaption>
+</figure>
+
+## 3. 表格
+
+| 能力 | 适合的内容 | 本文状态 |
+| --- | --- | :---: |
+| Markdown | 标题、列表、链接、表格 | ✅ |
+| KaTeX | 行内公式与独立公式 | ✅ |
+| MDX | 自定义组件和富文本样式 | ✅ |
+| Shiki | 代码语法高亮 | ✅ |
+| Astro | 静态构建与页面路由 | ✅ |
+
+表格在手机上会保留可读宽度，并允许横向滚动，不会把整张页面撑破。
+
+## 4. 数学公式
+
+### 4.1 行内公式
+
+推荐模型可以写作 $\hat{y}_{u,i}=f_\theta(x_u,x_i,c)$，其中 $u$ 表示用户，$i$ 表示物品，$c$ 表示上下文。
+
+### 4.2 独立公式
+
+如果我们同时考虑即时反馈和长期价值，可以写出一个折扣回报：
+
+$$
+G_t = \sum_{k=0}^{\infty}\gamma^k r_{t+k}, \qquad 0 \leq \gamma < 1.
+$$
+
+训练目标可以由即时损失与长期价值误差共同构成：
+
+$$
+\mathcal{L}(\theta)
+= \underbrace{\mathcal{L}_{\mathrm{rec}}(\theta)}_{\text{即时推荐质量}}
++ \lambda\,\underbrace{\mathbb{E}\left[(V_\theta(s_t)-G_t)^2\right]}_{\text{长期价值误差}}.
+$$
+
+公式由 KaTeX 在构建阶段渲染，因此页面加载快，也不依赖访问者浏览器临时计算。
+
+## 5. 代码高亮
+
+```python
+def discounted_return(rewards, gamma=0.95):
+    """从后向前计算每一步的折扣回报。"""
+    value = 0.0
+    returns = []
+    for reward in reversed(rewards):
+        value = reward + gamma * value
+        returns.append(value)
+    return list(reversed(returns))
+```
+
+## 6. 结论
+
+这一版已经具备技术博客的核心表达能力：**清晰的正文、可靠的公式、图表、代码和克制的视觉强调**。之后新增文章时，只需复制一个 `.mdx` 文件并修改顶部的标题、日期和标签。

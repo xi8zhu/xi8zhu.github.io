@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface PostModule {
+  frontmatter: {
+    title: string;
+    description: string;
+    date: string;
+    tags: string[];
+    draft?: boolean;
+  };
+  Content: any;
+  getHeadings: () => Promise<Heading[]>;
+}
+
+export function getStaticPaths() {
+  const postModules = import.meta.glob<PostModule>('../../content/posts/*.{md,mdx}', { eager: true });
+  return Object.entries(postModules)
+    .filter(([, post]) => !post.frontmatter.draft)
+    .map(([path]) => ({
+      params: { slug: path.split('/').pop()?.replace(/\.(md|mdx)$/, '') },
+    }));
+}
+
+const posts = import.meta.glob<PostModule>('../../content/posts/*.{md,mdx}', { eager: true });
+const slug = Astro.params.slug;
+const entry = Object.entries(posts).find(([path]) => path.endsWith(`/${slug}.md`) || path.endsWith(`/${slug}.mdx`));
+
+if (!entry) {
+  return Astro.redirect('/404');
+}
+
+const post = entry[1];
+const { Content, frontmatter } = post;
+const headings = (await post.getHeadings()).filter((heading) => heading.depth === 2 || heading.depth === 3);
+const formattedDate = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(new Date(frontmatter.date));
+---
+
+<BaseLayout title={`${frontmatter.title} — 刘子晗`} description={frontmatter.description}>
+  <main class="article-layout">
+    <article class="article reveal">
+      <a class="back-link" href="/#posts">← 返回文章列表</a>
+      <header class="article-header">
+        <h1>{frontmatter.title}</h1>
+        <p>{frontmatter.description}</p>
+        <div class="article-meta">
+          <time datetime={frontmatter.date}>{formattedDate}</time>
+          <span>·</span>
+          {frontmatter.tags.map((tag) => <span>#{tag}</span>)}
+        </div>
+      </header>
+      <div class="article-content">
+        <Content />
+      </div>
+    </article>
+
+    {headings.length > 0 && (
+      <aside class="toc" aria-label="文章目录">
+        <strong>目录</strong>
+        <ol>
+          {headings.map((heading) => (
+            <li class:list={{ nested: heading.depth === 3 }}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      </aside>
+    )}
+  </main>
+</BaseLayout>

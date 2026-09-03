@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface PostFrontmatter {
+  title: string;
+  description: string;
+  date: string;
+  tags: string[];
+  draft?: boolean;
+}
+
+interface PostModule {
+  frontmatter: PostFrontmatter;
+}
+
+const modules = import.meta.glob<PostModule>('../content/posts/*.{md,mdx}', { eager: true });
+const posts = Object.entries(modules)
+  .filter(([, post]) => !post.frontmatter.draft)
+  .map(([path, post]) => ({
+    ...post.frontmatter,
+    slug: path.split('/').pop()?.replace(/\.(md|mdx)$/, '') ?? '',
+  }))
+  .sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf());
+
+const formatDate = (date: string) => new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+}).format(new Date(date));
+---
+
+<BaseLayout>
+  <main class="content-grid">
+    <aside class="profile reveal" id="about">
+      <img class="avatar" src="/avatar.jpg" alt="刘子晗的头像" width="152" height="152" />
+      <h1>刘子晗</h1>
+      <p class="role">北京邮电大学 · 信息与通信工程</p>
+      <p class="role">硕士三年级</p>
+      <p class="location">北京，中国</p>
+      <p class="bio">你好，我是刘子晗，北京邮电大学信息与通信工程专业硕士研究生。目前主要关注推荐算法、AI for 物理层通信和长期价值建模。这里用来记录研究、学习与思考。</p>
+      <div class="profile-links">
+        <a href="https://github.com/xi8zhu" target="_blank" rel="noreferrer">GitHub</a>
+        <span>Email（待补充）</span>
+      </div>
+    </aside>
+
+    <div class="main-column">
+      <section class="intro-block reveal reveal-delay-1">
+        <p class="eyebrow">WELCOME</p>
+        <h2>你好，我是刘子晗。</h2>
+        <p>我目前在北京邮电大学攻读信息与通信工程硕士学位，现为硕士三年级。这个网站用于整理我的研究记录、技术笔记和阶段性思考。</p>
+        <div class="interests"><strong>研究兴趣：</strong>推荐算法、AI for 物理层通信、长期价值建模</div>
+      </section>
+
+      <section class="news-section reveal reveal-delay-2">
+        <div class="section-head"><h2>近期动态</h2></div>
+        <ul>
+          <li><time>2026.09</time><span>博客升级为 Astro + MDX 内容系统。</span></li>
+        </ul>
+      </section>
+
+      <section class="posts-section reveal reveal-delay-3" id="posts">
+        <div class="section-head"><h2>最新文章</h2><span>{posts.length} 篇</span></div>
+        <div class="post-list">
+          {posts.map((post) => (
+            <article class="post-card">
+              <time datetime={post.date}>{formatDate(post.date)}</time>
+              <div>
+                <h3><a href={`/blog/${post.slug}/`}>{post.title}</a></h3>
+                <p>{post.description}</p>
+                <div class="tags">{post.tags.map((tag) => <span>#{tag}</span>)}</div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
